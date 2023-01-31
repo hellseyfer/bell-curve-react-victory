@@ -1,0 +1,23 @@
+{
+  "name": "react-ts",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@types/react": "18.0.27",
+    "@types/react-dom": "18.0.10",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "victory": "36.6.8",
+    "victory-chart": "^36.6.8",
+    "victory-line": "^36.6.8"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "react-scripts": "latest"
+  }
+}
