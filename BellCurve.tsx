@@ -4,6 +4,7 @@ import React = require('react');
 import { VictoryChart } from 'victory-chart';
 // @ts-ignore
 import { VictoryLine } from 'victory-line';
+// @ts-ignore
 import { VictoryScatter } from 'victory-scatter';
 
 class VictoryLineState {
@@ -33,9 +34,17 @@ const BellCurve: React.FC = () => {
     new VictoryLineState()
   );
   const [pointerCoordinates, setPointerCoordinates] = useState<Coordinates>({
-    x: 0,
+    x: 44,
     y: 0,
   });
+
+  const densityNormal = (value: number, mean: number, stdev: number) => {
+    const SQRT2PI = Math.sqrt(2 * Math.PI);
+    stdev = stdev == null ? 1 : stdev;
+    const z = (value - (mean || 0)) / stdev;
+    return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
+  };
+
   //To Get X values for bell curve.
   useEffect(() => {
     // defining chart limits between which the graph will be plotted
@@ -54,15 +63,10 @@ const BellCurve: React.FC = () => {
   }, [bellMean, bellStdev]);
 
   //To Get Y values for Bell curve.
+
   useEffect(() => {
     // Using PDF function from vega-statistics instead of importing the whole library
-    const densityNormal = (value: number, mean: number, stdev: number) => {
-      const SQRT2PI = Math.sqrt(2 * Math.PI);
-      stdev = stdev == null ? 1 : stdev;
-      const z = (value - (mean || 0)) / stdev;
-      return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
-    };
-
+    densityNormal(pointerCoordinates.x, bellMean, bellStdev);
     let YValues = bellXValues.map((item: number) => {
       if (bellMean === null || bellStdev === undefined) {
         return null;
@@ -83,19 +87,9 @@ const BellCurve: React.FC = () => {
     console.log(arr_data);
     setVictoryLineData(arr_data);
     console.log(victoryLineData);
-
-    const x = 44;
-    const y = getYfromPointer(x);
-    setPointerCoordinates({ x: x, y: y });
+    const y = densityNormal(pointerCoordinates.x, bellMean, bellStdev);
+    setPointerCoordinates({ x: pointerCoordinates.x, y: y });
   }, [bellXValues, bellYValues]);
-
-  const getYfromPointer = (x: number) => {
-    const y =
-      Math.exp(-0.5 * Math.pow((x - bellMean) / bellStdev, 2)) /
-      (bellStdev * Math.sqrt(2 * Math.PI));
-    console.log(y);
-    return y;
-  };
 
   return (
     <VictoryChart maxDomain={{ x: 100, y: 0.1 }}>
