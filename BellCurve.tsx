@@ -32,7 +32,10 @@ const BellCurve: React.FC = () => {
   const [victoryLineData, setVictoryLineData] = useState<VictoryLineState>(
     new VictoryLineState()
   );
-  const [pointerCoordinates, setPointerCoordinates] = useState<Coordinates>({x: 0, y: 0});
+  const [pointerCoordinates, setPointerCoordinates] = useState<Coordinates>({
+    x: 0,
+    y: 0,
+  });
   //To Get X values for bell curve.
   useEffect(() => {
     // defining chart limits between which the graph will be plotted
@@ -96,13 +99,28 @@ const BellCurve: React.FC = () => {
 
   return (
     <VictoryChart maxDomain={{ x: 100, y: 0.1 }}>
+      <VictoryLine
+        style={{
+          data: { stroke: '#c43a31' },
+          parent: { border: '1px solid #ccc' },
+        }}
+        data={victoryLineData.data}
+      />
       <VictoryScatter
-        symbol="star"
-        size={8}
-        style={{ data: { fill: 'red' } }}
+        symbol="circle"
+        size={12}
+        style={{
+          data: { fill: '#c43a31' },
+          labels: {
+            fontSize: 14,
+            verticalAnchor: 'start',
+            textAnchor: 'middle',
+            fill: 'dark',
+          },
+        }}
+        labels={({ datum }) => `${datum.x}`}
         data={[{ x: pointerCoordinates.x, y: pointerCoordinates.y }]}
       />
-      <VictoryLine data={victoryLineData.data} />
     </VictoryChart>
   );
 };
