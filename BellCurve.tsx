@@ -6,6 +6,8 @@ import { VictoryChart } from 'victory-chart';
 import { VictoryLine } from 'victory-line';
 // @ts-ignore
 import { VictoryScatter } from 'victory-scatter';
+// @ts-ignore
+import { VictoryAxis } from 'victory-axis';
 
 class VictoryLineState {
   data: {
@@ -92,7 +94,9 @@ const BellCurve: React.FC = () => {
   }, [bellXValues, bellYValues]);
 
   return (
-    <VictoryChart maxDomain={{ x: 100, y: 0.1 }}>
+    <VictoryChart maxDomain={{ x: 100, y: 0.1 }} minDomain={{x: 0}}
+    >
+      <VictoryAxis crossAxis={false}/>
       <VictoryLine
         style={{
           data: { stroke: '#c43a31' },
@@ -100,6 +104,8 @@ const BellCurve: React.FC = () => {
         }}
         data={victoryLineData.data}
       />
+      {/*       We just need 1 scatter for representing the result
+       */}
       <VictoryScatter
         symbol="circle"
         size={12}
