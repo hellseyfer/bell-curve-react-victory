@@ -11,18 +11,19 @@ interface BellProps {
   x: number;
 }
 
-class VictoryLineState {
-  data: {
-    x: number;
-    y: number;
-  }[];
-  transitionData: {
-    x: number;
-    y: number;
-  }[];
+interface VictoryLineState {
+  data: Coordinates[];
+  transitionData: Coordinates[];
   arrayData: number[][];
-  style: React.CSSProperties;
+  style: React.CSSProperties | null;
 }
+
+const initVictoryLine: VictoryLineState = {
+  data: [],
+  transitionData: [],
+  arrayData: [],
+  style: null,
+};
 
 type Coordinates = {
   x: number;
@@ -36,9 +37,9 @@ const useBellCurve = ({ mean, stdev, x }: BellProps) => {
   const [bellMean, setBellMean] = useState<number>(mean); //example
   const [bellStdev, setBellStdev] = useState<number>(stdev); //example
   const [bellXValues, setBellXValues] = useState<number[]>([]);
-  const [bellYValues, setBellYValues] = useState<(number | null)[]>([]);
   const [victoryLineData, setVictoryLineData] = useState<VictoryLineState>(
-    new VictoryLineState()
+    //new VictoryLineState()
+    initVictoryLine
   );
 
   const [pointerCoordinates, setPointerCoordinates] = useState<Coordinates>({
@@ -53,7 +54,7 @@ const useBellCurve = ({ mean, stdev, x }: BellProps) => {
     return Math.exp(-0.5 * z * z) / (stdev * SQRT2PI);
   };
 
-  //To Get X values for bell curve.
+  //To Get X values for the initial Bell curve.
   useEffect(() => {
     // defining chart limits between which the graph will be plotted
     let lcl = bellMean - bellStdev * 6;
@@ -70,8 +71,7 @@ const useBellCurve = ({ mean, stdev, x }: BellProps) => {
     setBellXValues(ticks); //array for X values
   }, [bellMean, bellStdev]);
 
-  //To Get Y values for Bell curve.
-
+  //To Get Y values for the initial Bell curve.
   useEffect(() => {
     // Using PDF function from vega-statistics instead of importing the whole library
     densityNormal(pointerCoordinates.x, bellMean, bellStdev);
@@ -83,23 +83,20 @@ const useBellCurve = ({ mean, stdev, x }: BellProps) => {
         return pdfValue === Infinity ? null : pdfValue;
       }
     });
-    setBellYValues(YValues); // array for Y values
+    let arr_data = { data: [], transitionData: [], arrayData: [], style: null };
+    bellXValues.map((numberX, index) => {
+      arr_data.data.push({ x: numberX, y: YValues[index] });
+    });
+    setVictoryLineData(arr_data);
   }, [bellXValues]);
 
+  //Set pointer
   useEffect(() => {
-    console.log('arrays: ', bellXValues);
-    var arr_data = { data: [], transitionData: [], arrayData: [], style: null };
-    bellXValues.map((numberX, index) => {
-      arr_data.data.push({ x: numberX, y: bellYValues[index] });
-    });
-    console.log(arr_data);
-    setVictoryLineData(arr_data);
-    console.log(victoryLineData);
     const y = densityNormal(pointerCoordinates.x, bellMean, bellStdev);
     setPointerCoordinates({ x: pointerCoordinates.x, y: y });
-  }, [bellXValues, bellYValues]);
+  }, [bellXValues]);
 
-  return {victoryLineData, pointerCoordinates};
+  return { victoryLineData, pointerCoordinates };
 };
 
 export default useBellCurve;
