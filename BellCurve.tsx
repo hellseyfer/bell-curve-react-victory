@@ -98,7 +98,7 @@ const BellCurve = ({ mean, stdev, x }: BellProps) => {
     console.log(victoryLineData);
     const y = densityNormal(pointerCoordinates.x, bellMean, bellStdev);
     setPointerCoordinates({ x: pointerCoordinates.x, y: y });
-  }, [bellXValues, bellYValues]);
+  }, [bellYValues]);
 
   return (
     <VictoryChart maxDomain={{ x: 100, y: 0.1 }} minDomain={{ x: 0 }}>
