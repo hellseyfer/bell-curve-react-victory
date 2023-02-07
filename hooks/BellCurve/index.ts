@@ -1,19 +1,16 @@
+import { VictoryChart } from 'victory-chart';
+import { VictoryLine } from 'victory-line';
+import { VictoryScatter } from 'victory-scatter';
+import { VictoryAxis } from 'victory-axis';
 import { useEffect, useState } from 'react';
 import React = require('react');
-// @ts-ignore
-import { VictoryChart } from 'victory-chart';
-// @ts-ignore
-import { VictoryLine } from 'victory-line';
-// @ts-ignore
-import { VictoryScatter } from 'victory-scatter';
-// @ts-ignore
-import { VictoryAxis } from 'victory-axis';
 
 interface BellProps {
   mean: number;
   stdev: number;
   x: number;
 }
+
 class VictoryLineState {
   data: {
     x: number;
@@ -26,11 +23,13 @@ class VictoryLineState {
   arrayData: number[][];
   style: React.CSSProperties;
 }
+
 type Coordinates = {
   x: number;
   y: number;
 };
-const BellCurve = ({ mean, stdev, x }: BellProps) => {
+
+const useBellCurve = ({ mean, stdev, x }: BellProps) => {
   console.log(mean, stdev, x);
   //const [bellMean, setBellMean] = useState<number>(64.58); //example
   //const [bellStdev, setBellStdev] = useState<number>(10.59); //example
@@ -100,35 +99,7 @@ const BellCurve = ({ mean, stdev, x }: BellProps) => {
     setPointerCoordinates({ x: pointerCoordinates.x, y: y });
   }, [bellXValues, bellYValues]);
 
-  return (
-    <VictoryChart maxDomain={{ x: 100, y: 0.1 }} minDomain={{ x: 0 }}>
-      <VictoryAxis crossAxis={false} />
-      <VictoryLine
-        style={{
-          data: { stroke: '#c43a31' },
-          parent: { border: '1px solid #ccc' },
-        }}
-        data={victoryLineData.data}
-      />
-      {/*       We just need 1 scatter for representing the result
-       */}
-      <VictoryScatter
-        symbol="circle"
-        size={12}
-        style={{
-          data: { fill: '#c43a31' },
-          labels: {
-            fontSize: 14,
-            verticalAnchor: 'start',
-            textAnchor: 'middle',
-            fill: 'dark',
-          },
-        }}
-        labels={({ datum }) => `${datum.x}`}
-        data={[{ x: pointerCoordinates.x, y: pointerCoordinates.y }]}
-      />
-    </VictoryChart>
-  );
+  return {victoryLineData, pointerCoordinates};
 };
 
-export default BellCurve;
+export default useBellCurve;
